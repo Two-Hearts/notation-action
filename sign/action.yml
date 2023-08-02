@@ -39,6 +39,13 @@ inputs:
   plugin_config:
      description: 'plugin config for signing with the plugin'
      required: false
+  allow_referrers_api:
+     description: |
+      use the [Referrers API](https://github.com/opencontainers/distribution-spec/blob/main/spec.md#listing-referrers) to store signatures in the registry, 
+      if not supported, fallback to the [Referrers tag schema](https://github.com/opencontainers/distribution-spec/blob/main/spec.md#referrers-tag-schema)
+      options: 'true', 'false'
+     required: false
+     default: 'false'
 runs:
   using: node16
   main: ../dist/sign.js

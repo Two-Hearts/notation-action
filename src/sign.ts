@@ -32,13 +32,19 @@ async function sign(): Promise<void> {
         // inputs from user
         const key_id = core.getInput('key_id');
         const plugin_config = core.getInput('plugin_config');
+        const pluginConfigList: string[] = [];
         const target_artifact_ref = core.getInput('target_artifact_reference');
         const signature_format = core.getInput('signature_format');
+        const allow_referrers_api = core.getInput('allow_referrers_api');
 
         // sign core process
+        let notationCommand: string[] = ['sign', '--signature-format', signature_format, '--id', key_id, '--plugin', plugin_name, ...pluginConfigList, target_artifact_ref];
         if (process.env.NOTATION_EXPERIMENTAL) {
+            if (allow_referrers_api === 'true') {
+                notationCommand.push('--allow-referrers-api');
+            }
             if (plugin_config) {
-                await exec.getExecOutput('notation', ['sign', '--allow-referrers-api', '--signature-format', signature_format, '--id', key_id, '--plugin', plugin_name, `--plugin-config=${plugin_config}`, target_artifact_ref]);
+                await exec.getExecOutput('notation', [...notationCommand, `--plugin-config=${plugin_config}`]);
             } else {
                 await exec.getExecOutput('notation', ['sign', '--allow-referrers-api', '--signature-format', signature_format, '--id', key_id, '--plugin', plugin_name, target_artifact_ref]);
             }
