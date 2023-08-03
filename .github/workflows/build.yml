@@ -32,5 +32,15 @@ jobs:
         run: npm ci
       - name: rebuild the dist/ directory
         run: npm run build
+      - name: extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
       - name: check for changes
         run: git status
+      - name: stage changed files
+        run: git add .
+      - name: commit changed files
+        run: git commit -m "build from workflow" --signoff
+      - name: push
+        run: git push -u origin ${{ steps.extract_branch.outputs.branch }}
