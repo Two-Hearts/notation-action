@@ -38,12 +38,12 @@ jobs:
         id: extract_branch
       - name: check for changes
         run: git status
-      - name: stage changed files
-        run: git add .
-      - name: commit changed files
+      - name: push changed files
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git commit -m "build from workflow"
-      - name: push
-        run: git push -u origin ${{ steps.extract_branch.outputs.branch }}
+          if ! git diff --exit-code; then
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git add .
+            git commit -m "build from workflow"
+            git push -u origin ${{ steps.extract_branch.outputs.branch }}
+          fi
